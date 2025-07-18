@@ -128,7 +128,17 @@ python3 test_service.py http://custom-host:8080  # Test custom endpoint
 Native Rust test client with TCP messaging:
 
 ```bash
+# Basic usage
 cargo run --bin test_client
+
+# With custom host/port
+cargo run --bin test_client --host 192.168.1.100 --port 9000
+
+# With custom URL
+cargo run --bin test_client --url http://custom-host:8080
+
+# Show help
+cargo run --bin test_client --help
 ```
 
 **Features:**
@@ -136,7 +146,85 @@ cargo run --bin test_client
 - Comprehensive endpoint validation
 - Error handling verification
 - Health checks, KeyPackage operations, group management, message broadcasting
+- Command-line argument parsing with help documentation
+- Environment variable support (`SERVICE_URL`)
 - **Status**: ✅ Fully Operational
+
+**Command-line Options:**
+- `-h, --help` - Show help message
+- `--host HOST` - Service host (default: 127.0.0.1)
+- `--port PORT` - Service port (default: 8080)
+- `--url URL` - Full service URL (overrides host/port)
+
+#### Python TCP Test Client (`test_tcp_client.py`)
+
+Python-based TCP test client with comprehensive argument parsing:
+
+```bash
+# Basic usage
+python3 test_tcp_client.py
+
+# With custom host/port
+python3 test_tcp_client.py --host 192.168.1.100 --port 9000
+
+# With timeout and verbose output
+python3 test_tcp_client.py --timeout 10 --verbose
+
+# Show help
+python3 test_tcp_client.py --help
+```
+
+**Features:**
+- TCP JSON messaging protocol
+- Comprehensive test coverage
+- Command-line argument parsing with argparse
+- Environment variable support
+- **Status**: ✅ Fully Operational
+
+**Command-line Options:**
+- `-h, --help` - Show help message
+- `--host HOST` - Service host (default: 127.0.0.1)
+- `--port PORT` - Service port (default: 8080)
+- `--timeout SEC` - Connection timeout in seconds (default: 5)
+- `--verbose` - Enable verbose output
+
+**Environment Variables:**
+- `MLS_SERVICE_HOST` - Service host (default: 127.0.0.1)
+- `MLS_SERVICE_PORT` - Service port (default: 8080)
+
+#### Demo Script (`demo.sh`)
+
+Comprehensive demonstration script with optional features:
+
+```bash
+# Run full demo
+./demo.sh
+
+# Skip test suite
+./demo.sh --skip-tests
+
+# Skip manual API testing
+./demo.sh --skip-manual
+
+# Enable verbose output
+./demo.sh --verbose
+
+# Show help
+./demo.sh --help
+```
+
+**Features:**
+- Complete service demonstration
+- Optional test execution
+- Manual API testing examples
+- Service status monitoring
+- **Status**: ✅ Fully Operational
+
+**Command-line Options:**
+- `-h, --help` - Show help message
+- `--skip-tests` - Skip the test suite execution
+- `--skip-manual` - Skip manual API testing
+- `--verbose` - Enable verbose output
 
 ## API Reference
 

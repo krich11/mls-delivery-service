@@ -1,4 +1,5 @@
 use std::collections::HashMap;
+use std::env;
 use serde_json::{json, Value};
 use tokio::time::{sleep, Duration};
 use tokio::net::TcpStream;
@@ -288,9 +289,99 @@ impl TestClient {
     }
 }
 
+fn print_help() {
+    println!("MLS Delivery Service Rust Test Client");
+    println!("=====================================");
+    println!();
+    println!("Usage: cargo run --bin test_client [OPTIONS]");
+    println!();
+    println!("Options:");
+    println!("  -h, --help     Show this help message");
+    println!("  --host HOST    Service host (default: 127.0.0.1)");
+    println!("  --port PORT    Service port (default: 8080)");
+    println!("  --url URL      Full service URL (overrides host/port)");
+    println!();
+    println!("Environment Variables:");
+    println!("  SERVICE_URL    Full service URL (default: http://127.0.0.1:8080)");
+    println!();
+    println!("Examples:");
+    println!("  cargo run --bin test_client");
+    println!("  cargo run --bin test_client --host 192.168.1.100 --port 9000");
+    println!("  SERVICE_URL=http://custom-host:8080 cargo run --bin test_client");
+    println!();
+    println!("Test Coverage:");
+    println!("  • Health checks and service validation");
+    println!("  • KeyPackage storage and retrieval");
+    println!("  • Group creation and management");
+    println!("  • Message broadcasting and relay");
+    println!("  • Error handling and edge cases");
+    println!();
+    println!("Exit Codes:");
+    println!("  0 - All tests passed");
+    println!("  1 - Some tests failed");
+    println!("  2 - Invalid arguments");
+}
+
 #[tokio::main]
 async fn main() {
-    let base_url = std::env::var("SERVICE_URL").unwrap_or_else(|_| "http://127.0.0.1:8080".to_string());
+    let args: Vec<String> = env::args().collect();
+    
+    // Check for help flag
+    if args.iter().any(|arg| arg == "-h" || arg == "--help") {
+        print_help();
+        std::process::exit(0);
+    }
+    
+    // Parse command line arguments
+    let mut host = "127.0.0.1".to_string();
+    let mut port = "8080".to_string();
+    let mut custom_url = None;
+    
+    let mut i = 1;
+    while i < args.len() {
+        match args[i].as_str() {
+            "--host" => {
+                if i + 1 < args.len() {
+                    host = args[i + 1].clone();
+                    i += 2;
+                } else {
+                    eprintln!("Error: --host requires a value");
+                    std::process::exit(2);
+                }
+            }
+            "--port" => {
+                if i + 1 < args.len() {
+                    port = args[i + 1].clone();
+                    i += 2;
+                } else {
+                    eprintln!("Error: --port requires a value");
+                    std::process::exit(2);
+                }
+            }
+            "--url" => {
+                if i + 1 < args.len() {
+                    custom_url = Some(args[i + 1].clone());
+                    i += 2;
+                } else {
+                    eprintln!("Error: --url requires a value");
+                    std::process::exit(2);
+                }
+            }
+            _ => {
+                eprintln!("Error: Unknown argument '{}'", args[i]);
+                eprintln!("Use --help for usage information");
+                std::process::exit(2);
+            }
+        }
+    }
+    
+    // Determine service URL
+    let base_url = if let Some(url) = custom_url {
+        url
+    } else {
+        env::var("SERVICE_URL").unwrap_or_else(|_| format!("http://{}:{}", host, port))
+    };
+    
     let client = TestClient::new(base_url);
     
     // Wait a bit for service to start if needed
