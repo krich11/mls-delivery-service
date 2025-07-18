@@ -1,0 +1,47 @@
+[Unit]
+Description=MLS Delivery Service
+Documentation=https://github.com/krich11/mls-delivery-service
+After=network.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=mls-delivery
+Group=mls-delivery
+WorkingDirectory=/opt/mls-delivery-service
+ExecStart=/opt/mls-delivery-service/target/release/mls-delivery-service
+ExecReload=/bin/kill -HUP $MAINPID
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=mls-delivery-service
+
+# Security settings
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/mls-delivery-service/logs /opt/mls-delivery-service/data
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectControlGroups=true
+RestrictRealtime=true
+RestrictSUIDSGID=true
+
+# Resource limits
+LimitNOFILE=65536
+LimitNPROC=4096
+
+# Environment variables
+Environment=RUST_LOG=info
+Environment=SERVICE_HOST=127.0.0.1
+Environment=SERVICE_PORT=8080
+
+# Kill mode
+KillMode=mixed
+KillSignal=SIGTERM
+TimeoutStopSec=30
+
+[Install]
+WantedBy=multi-user.target 

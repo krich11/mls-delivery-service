@@ -52,6 +52,49 @@ A minimal Rust-based Delivery Service for Linux to support Messaging Layer Secur
    curl http://127.0.0.1:8080/health
    ```
 
+### Production Installation (Systemd Service)
+
+For production deployment, use the systemd installation script:
+
+```bash
+# Install as systemd service (requires sudo)
+sudo ./install_systemd.sh
+
+# Install with custom settings
+sudo ./install_systemd.sh --port 9000 --host 0.0.0.0
+
+# Install with custom user
+sudo ./install_systemd.sh --user myuser --group mygroup
+
+# Show installation help
+./install_systemd.sh --help
+```
+
+**What the installer does:**
+- Creates dedicated service user and group
+- Builds optimized release binary
+- Installs systemd service with security settings
+- Sets up log rotation
+- Enables automatic startup
+- Configures proper file permissions
+
+**Service Management:**
+```bash
+# Start/stop/restart service
+sudo systemctl start mls-delivery-service
+sudo systemctl stop mls-delivery-service
+sudo systemctl restart mls-delivery-service
+
+# Check status
+sudo systemctl status mls-delivery-service
+
+# View logs
+sudo journalctl -u mls-delivery-service -f
+
+# Uninstall service
+sudo ./install_systemd.sh --uninstall
+```
+
 ## Scripts and Tools
 
 ### Launch Script (`launch_service.sh`)
