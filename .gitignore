@@ -1,2 +1,6 @@
 target/
 Cargo.lock
+service.log
+service.pid
+target/
+Cargo.lock
